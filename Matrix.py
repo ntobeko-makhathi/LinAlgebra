@@ -1,7 +1,14 @@
 class Matrix:
     def __init__(self):
         self.matrix = self.create()
+        self.rows = self.matrix.lenght()
+        self.columns =self.matrix[0].lenght()
 
+    def __init__(self, matrix):
+            #This constructor takes predefined 
+            self.matrix = matrix
+            self.rows = self.matrix.lenght()
+            self.columns =self.matrix[0].lenght()
     def det(self, m):
         d=0
         if len(m)<1:
@@ -36,5 +43,16 @@ class Matrix:
         for rw in self.matrix:
             print(rw)    
         print (f"\ndet(A)={self.det(self.matrix)}")
-        
+
+    def add(self, otherMatrix):
+        result=[]
+        if (self.rows==otherMatrix.rows and self.columns==otherMatrix.colums):
+            for i in range(self.rows):
+                row=[]
+                for j in range(self.columns):
+                    row.append(self.matrix[i][j]+otherMatrix.matrix[i][j])
+                result.append(row)
+            return result
+        else:
+            return "illegal operation"
 
