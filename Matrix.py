@@ -1,18 +1,23 @@
 class Matrix:
     def __init__(self):
+        #This constructor creates a matrix from user input
         self.matrix = self.create()
-        self.rows = self.matrix.lenght()
-        self.columns =self.matrix[0].lenght()
+        self.__rows = self.matrix.lenght()
+        self.__columns =self.matrix[0].lenght()
 
-    def __init__(self, matrix):
+    def __init__(self, matrix): 
             #This constructor takes predefined 
             self.matrix = matrix
-            self.rows = self.matrix.lenght()
-            self.columns =self.matrix[0].lenght()
+            self.__rows = self.matrix.lenght()
+            self.__columns =self.matrix[0].lenght()
     def det(self, m):
+        #This function calculates the determinant of a matrix using recursion
         d=0
         if len(m)<1:
-            return
+            return None
+        if not self.is_square():
+            print("The matrix is not square, cannot calculate determinant")
+            return None
         if len(self.m)==1:
             return m[0][0]
         else:
@@ -25,8 +30,9 @@ class Matrix:
                 
             return d
     def create(self):
+        #This function creates a matrix from user input
         matrix =[]
-        row = int(input("How many rows is the matrix:\n"))
+        row = int(input("How many __rows is the matrix:\n"))
         column = int(input("How many column is the matrix:\n"))
 
         for i in range(row):
@@ -39,20 +45,124 @@ class Matrix:
         return matrix
 
     def display(self):
+        #This function displays the matrix and its determinant
         print("\nmatrix A:\n")
         for rw in self.matrix:
             print(rw)    
         print (f"\ndet(A)={self.det(self.matrix)}")
 
     def add(self, otherMatrix):
+        #This function adds two matrices together
         result=[]
-        if (self.rows==otherMatrix.rows and self.columns==otherMatrix.colums):
-            for i in range(self.rows):
+        if (self.__rows==otherMatrix.__rows and self.__columns==otherMatrix.__columns):
+            for i in range(self.__rows):
                 row=[]
-                for j in range(self.columns):
+                for j in range(self.__columns):
                     row.append(self.matrix[i][j]+otherMatrix.matrix[i][j])
                 result.append(row)
             return result
         else:
-            return "illegal operation"
+            print("The matrices are not the same size, cannot add them together")
+            return None
 
+    def multiply(self, otherMatrix):
+        #This function multiplies two matrices together
+        result=[]
+        if (self.__columns==otherMatrix.__rows):
+            for i in range(self.__rows):
+                row=[]
+                for j in range(otherMatrix.__columns):
+                    sum=0
+                    for k in range(self.__columns):
+                        sum+=self.matrix[i][k]*otherMatrix.matrix[k][j]
+                    row.append(sum)
+                result.append(row)
+            return result
+        else:
+            print("The matrices are not compatible for multiplication")
+            return None
+
+    def transpose(self):
+        #This function transposes a matrix
+        result=[]
+        for i in range(self.__columns):
+            row=[]
+            for j in range(self.__rows):
+                row.append(self.matrix[j][i])
+            result.append(row)
+        return result
+
+    def inverse(self):
+        #This function calculates the inverse of a matrix using the adjoint method
+        if not self.is_square():
+            print("The matrix is not square, cannot calculate inverse")
+            return None
+        det=self.det(self.matrix)
+        if det==0:
+            print("The matrix is not invertible")
+            return None
+        else:
+            adjoint=[]
+            for i in range(self.__rows):
+                row=[]
+                for j in range(self.__columns):
+                    minor=[]
+                    for k in range(self.__rows):
+                        if k!=i:
+                            minor.append(self.matrix[k][:j]+self.matrix[k][j+1:])
+                    row.append(((-1)**(i+j))*self.det(minor))
+                adjoint.append(row)
+            adjoint=self.transpose(adjoint)
+            inverse=[]
+            for i in range(self.__rows):
+                row=[]
+                for j in range(self.__columns):
+                    row.append(adjoint[i][j]/det)
+                inverse.append(row)
+            return inverse
+    def rank(self):
+        #This function calculates the rank of a matrix using row reduction
+        matrix=self.matrix
+        for i in range(self.__rows):
+            for j in range(self.columns):
+                if matrix[i][j]!=0:
+                    for k in range(i+1,self.__rows):
+                        factor=matrix[k][j]/matrix[i][j]
+                        for l in range(j,self.columns):
+                            matrix[k][l]-=factor*matrix[i][l]
+                    break
+        rank=0
+        for i in range(self.__rows):
+            if any(matrix[i]):
+                rank+=1
+        return rank
+
+    def is_square(self):
+        #This function checks if a matrix is square
+        if self.__rows==self.columns:
+            return True
+        else:
+            return False
+
+    def is_invertible(self):
+        #This function checks if a matrix is invertible
+        if not self.is_square():
+            print("The matrix is not square, cannot check if it is invertible")
+            return False
+        det=self.det(self.matrix)
+        if det==0:
+            return False
+        else:
+            return True
+
+    def is_symmetric(self):
+        #This function checks if a matrix is symmetric
+        if not self.is_square():
+            print("The matrix is not square, cannot check if it is symmetric")
+            return False
+        for i in range(self.__rows):
+            for j in range(i,self.__columns):
+                if self.matrix[i][j]!=self.matrix[j][i]:
+                    return False
+        return True
+    
