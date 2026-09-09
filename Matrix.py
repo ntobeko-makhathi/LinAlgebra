@@ -94,12 +94,8 @@ class Matrix:
 
     def inverse(self):
         #This function calculates the inverse of a matrix using the adjoint method
-        if not self.is_square():
-            print("The matrix is not square, cannot calculate inverse")
-            return None
-        det=self.det(self.matrix)
-        if det==0:
-            print("The matrix is not invertible")
+        if not self.is_invertible():
+            print("The matrix is not invertible, cannot calculate inverse")
             return None
         else:
             adjoint=[]
@@ -117,18 +113,18 @@ class Matrix:
             for i in range(self.__rows):
                 row=[]
                 for j in range(self.__columns):
-                    row.append(adjoint[i][j]/det)
+                    row.append(adjoint[i][j]/self.det(self.matrix))
                 inverse.append(row)
             return inverse
     def rank(self):
         #This function calculates the rank of a matrix using row reduction
         matrix=self.matrix
         for i in range(self.__rows):
-            for j in range(self.columns):
+            for j in range(self.__columns):
                 if matrix[i][j]!=0:
                     for k in range(i+1,self.__rows):
                         factor=matrix[k][j]/matrix[i][j]
-                        for l in range(j,self.columns):
+                        for l in range(j,self.__columns):
                             matrix[k][l]-=factor*matrix[i][l]
                     break
         rank=0
@@ -139,7 +135,7 @@ class Matrix:
 
     def is_square(self):
         #This function checks if a matrix is square
-        if self.__rows==self.columns:
+        if self.__rows==self.__columns:
             return True
         else:
             return False
