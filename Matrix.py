@@ -1,15 +1,19 @@
-class Matrix:
-    def __init__(self):
-        #This constructor creates a matrix from user input
-        self.matrix = self.create()
-        self.__rows = self.matrix.lenght()
-        self.__columns =self.matrix[0].lenght()
+#auther: @NtobekoMakhathi
 
-    def __init__(self, matrix): 
-            #This constructor takes predefined 
-            self.matrix = matrix
-            self.__rows = self.matrix.lenght()
-            self.__columns =self.matrix[0].lenght()
+class Matrix:
+    def __init__(self, matrix=None):
+        #This constructor creates a matrix from user input
+        self.matrix = self.create() if matrix is None else matrix
+        self.__rows = len(self.matrix)
+        self.__columns = len(self.matrix[0]) if self.matrix else 0
+
+    @classmethod
+    def matrix(cls, matrix): 
+            #This constructor creates a matrix from a given list of lists
+            mymatrix = matrix
+            return cls(mymatrix)
+
+    
     def det(self, m):
         #This function calculates the determinant of a matrix using recursion
         d=0
@@ -18,7 +22,7 @@ class Matrix:
         if not self.is_square():
             print("The matrix is not square, cannot calculate determinant")
             return None
-        if len(self.m)==1:
+        if len(m)==1:
             return m[0][0]
         else:
             for j in range(len(m[0])):
@@ -42,14 +46,15 @@ class Matrix:
                 a = int(input(""))
                 row_value.append(a)
             matrix.append(row_value)
-        return matrix
+        return list(matrix)
 
     def display(self):
         #This function displays the matrix and its determinant
         print("\nmatrix A:\n")
         for rw in self.matrix:
-            print(rw)    
-        print (f"\ndet(A)={self.det(self.matrix)}")
+            print(rw)  
+        determinant = self.det((self.matrix))  
+        print (f"\ndet(A) = {determinant}")
 
     def add(self, otherMatrix):
         #This function adds two matrices together
