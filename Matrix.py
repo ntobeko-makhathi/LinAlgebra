@@ -29,8 +29,8 @@ class Matrix:
                 minor=[]
                 for i in range(1,len(m[0])):
                     minor.append((m[i][:j]+m[i][j+1:]))
-        
-                d+=m[0][j]*((-1)**(j))*self.det_by_row_echelon(minor)
+                minor_matrix = Matrix.matrix(minor)
+                d+=m[0][j]*((-1)**(j))*minor_matrix.det_by_row_echelon()
                 
             return d
     def create(self):
@@ -48,13 +48,38 @@ class Matrix:
             matrix.append(row_value)
         return list(matrix)
 
-    def display(self):
+    def display(self, property=None):
         #This function displays the matrix and its determinant
         print("\nmatrix A:\n")
         for rw in self.matrix:
-            print(rw)  
-        determinant = self.det((self.matrix))  
-        print (f"\ndet(A) = {determinant}")
+            print(rw) 
+        match property:
+            case "determinant":
+                determinant = self.det((self.matrix))  
+                print (f"\ndet(A) = {determinant}")
+            case "rank":
+                rank = self.rank()
+                print (f"\nRank(A) = {rank}")
+            case "inverse":
+                inverse = self.inverse()
+                if inverse is not None:
+                    print("\nInverse(A):\n")
+                    for rw in inverse:
+                        print(rw)
+            case "adjoint":
+                adjoint = self.adjoint()
+                print("\nAdjoint(A):\n")
+                for rw in adjoint:
+                    print(rw)
+            case "transpose":
+                transpose = self.transpose()
+                print("\nTranspose(A):\n")
+                for rw in transpose:
+                    print(rw)
+            case "symmetric":
+                symmetric = self.is_symmetric()
+                print (f"\nIs(A) = {symmetric}")
+
 
     def add(self, otherMatrix):
         #This function adds two matrices together
@@ -110,13 +135,15 @@ class Matrix:
             print("The matrices are not compatible for multiplication")
             return None
 
-    def transpose(self):
+    def transpose(self, matrix=None):
         #This function transposes a matrix
+        if matrix is None:
+            matrix = self.matrix
         result=[]
-        for i in range(self.__columns):
+        for i in range(len(matrix[0])):
             row=[]
-            for j in range(self.__rows):
-                row.append(self.matrix[j][i])
+            for j in range(len(matrix)):
+                row.append(matrix[j][i])
             result.append(row)
         return result
 
@@ -224,9 +251,14 @@ class Matrix:
         for j in range(self.__columns):
             self.matrix[row1][j] += scalar * self.matrix[row2][j]
 
-    def row_echelon(self):
+    def row_echelon(self, matrix=None):
         #This function converts a matrix to row echelon form
-        matrix=self.matrix
+        if matrix is None:
+            matrix=self.matrix
+        if len(matrix) == 0:
+            return matrix
+        if len(matrix[0]) == 1:
+            return matrix
         for i in range(self.__rows):
             for j in range(self.__columns):
                 if matrix[i][j]!=0:
@@ -236,13 +268,18 @@ class Matrix:
                             matrix[k][l]-=factor*matrix[i][l]
                     break
         return matrix
-    def det_by_row_echelon(self):
+    def det_by_row_echelon(self, matrix=None):
         #This function calculates the determinant of a matrix using row echelon form
         if not self.is_square():
             print("The matrix is not square, cannot calculate determinant")
             return None
-        matrix=self.row_echelon()
+        if matrix is None:
+            matrix=self.row_echelon()
+        else:
+            matrix=self.row_echelon(matrix)
         det=1
+        if len(matrix) == 1:
+            return matrix[0][0]
         for i in range(self.__rows):
             det*=matrix[i][i]
         return det
