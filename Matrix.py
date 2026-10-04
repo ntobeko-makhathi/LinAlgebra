@@ -167,3 +167,27 @@ class Matrix:
                     return False
         return True
     
+    #row operations
+    def row_swap(self, row1, row2):
+        #This function swaps two rows of a matrix
+        if row1<0 or row1>=self.__rows or row2<0 or row2>=self.__rows:
+            print("Invalid row index, cannot swap rows")
+            return None
+        self.matrix[row1], self.matrix[row2] = self.matrix[row2], self.matrix[row1]
+    
+    def row_multiply(self, row, scalar):
+        #This function multiplies a row of a matrix by a scalar
+        if row<0 or row>=self.__rows:
+            print("Invalid row index, cannot multiply row")
+            return None
+        for j in range(self.__columns):
+            self.matrix[row][j] *= scalar
+
+    def row_add(self, row1, row2, scalar):
+        #This function adds a multiple of one row to another row of a matrix
+        if row1<0 or row1>=self.__rows or row2<0 or row2>=self.__rows:
+            print("Invalid row index, cannot add rows")
+            return None
+        for j in range(self.__columns):
+            self.matrix[row1][j] += scalar * self.matrix[row2][j]
+    
