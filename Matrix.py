@@ -30,7 +30,7 @@ class Matrix:
                 for i in range(1,len(m[0])):
                     minor.append((m[i][:j]+m[i][j+1:]))
         
-                d+=m[0][j]*((-1)**(j))*self.det(minor)
+                d+=m[0][j]*((-1)**(j))*self.det_by_row_echelon(minor)
                 
             return d
     def create(self):
@@ -224,4 +224,25 @@ class Matrix:
         for j in range(self.__columns):
             self.matrix[row1][j] += scalar * self.matrix[row2][j]
 
-    
+    def row_echelon(self):
+        #This function converts a matrix to row echelon form
+        matrix=self.matrix
+        for i in range(self.__rows):
+            for j in range(self.__columns):
+                if matrix[i][j]!=0:
+                    for k in range(i+1,self.__rows):
+                        factor=matrix[k][j]/matrix[i][j]
+                        for l in range(j,self.__columns):
+                            matrix[k][l]-=factor*matrix[i][l]
+                    break
+        return matrix
+    def det_by_row_echelon(self):
+        #This function calculates the determinant of a matrix using row echelon form
+        if not self.is_square():
+            print("The matrix is not square, cannot calculate determinant")
+            return None
+        matrix=self.row_echelon()
+        det=1
+        for i in range(self.__rows):
+            det*=matrix[i][i]
+        return det
