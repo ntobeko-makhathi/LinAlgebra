@@ -69,6 +69,29 @@ class Matrix:
         else:
             print("The matrices are not the same size, cannot add them together")
             return None
+    def subtract(self, otherMatrix):
+        #This function subtracts two matrices from each other
+        result=[]
+        if (self.__rows==otherMatrix.__rows and self.__columns==otherMatrix.__columns):
+            for i in range(self.__rows):
+                row=[]
+                for j in range(self.__columns):
+                    row.append(self.matrix[i][j]-otherMatrix.matrix[i][j])
+                result.append(row)
+            return result
+        else:
+            print("The matrices are not the same size, cannot subtract them from each other")
+            return None
+
+    def scalar_multiply(self, scalar):
+        #This function multiplies a matrix by a scalar
+        result=[]
+        for i in range(self.__rows):
+            row=[]
+            for j in range(self.__columns):
+                row.append(self.matrix[i][j]*scalar)
+            result.append(row)
+        return result
 
     def multiply(self, otherMatrix):
         #This function multiplies two matrices together
@@ -97,10 +120,10 @@ class Matrix:
             result.append(row)
         return result
 
-    def inverse(self):
-        #This function calculates the inverse of a matrix using the adjoint method
-        if not self.is_invertible():
-            print("The matrix is not invertible, cannot calculate inverse")
+    def adjoint(self):
+        #This function calculates the adjoint of a matrix
+        if not self.is_square():
+            print("The matrix is not square, cannot calculate adjoint")
             return None
         else:
             adjoint=[]
@@ -113,14 +136,24 @@ class Matrix:
                             minor.append(self.matrix[k][:j]+self.matrix[k][j+1:])
                     row.append(((-1)**(i+j))*self.det(minor))
                 adjoint.append(row)
-            adjoint=self.transpose(adjoint)
+            return self.transpose(adjoint)
+        
+    def inverse(self):
+        #This function calculates the inverse of a matrix using the adjoint method
+        if not self.is_invertible():
+            print("The matrix is not invertible, cannot calculate inverse")
+            return None
+        else:
+            adjoint=self.adjoint()
+            determinant=self.det(self.matrix)
             inverse=[]
             for i in range(self.__rows):
                 row=[]
                 for j in range(self.__columns):
-                    row.append(adjoint[i][j]/self.det(self.matrix))
+                    row.append(adjoint[i][j]/determinant)
                 inverse.append(row)
             return inverse
+    
     def rank(self):
         #This function calculates the rank of a matrix using row reduction
         matrix=self.matrix
@@ -190,4 +223,5 @@ class Matrix:
             return None
         for j in range(self.__columns):
             self.matrix[row1][j] += scalar * self.matrix[row2][j]
+
     
