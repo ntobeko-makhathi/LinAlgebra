@@ -283,3 +283,5 @@ class Matrix:
         for i in range(self.__rows):
             det*=matrix[i][i]
         return det
+
+    
